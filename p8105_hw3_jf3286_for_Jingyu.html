@@ -1379,7 +1379,27 @@ janitor::clean_names() %&gt;%
   mutate (
     response = factor(response),
     response = fct_relevel (response, &quot;Poor&quot;, &quot;Fair&quot;, &quot;Good&quot;, &quot;Very good&quot;, &quot;Excellent&quot;)
-  )</code></pre>
+  )
+brfss_smart2010</code></pre>
+<pre><code>## # A tibble: 10,625 x 23
+##     year state county class topic question response sample_size data_value
+##    &lt;int&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;    &lt;fct&gt;          &lt;int&gt;      &lt;dbl&gt;
+##  1  2010 AL    AL - ~ Heal~ Over~ How is ~ Excelle~          94       18.9
+##  2  2010 AL    AL - ~ Heal~ Over~ How is ~ Very go~         148       30  
+##  3  2010 AL    AL - ~ Heal~ Over~ How is ~ Good             208       33.1
+##  4  2010 AL    AL - ~ Heal~ Over~ How is ~ Fair             107       12.5
+##  5  2010 AL    AL - ~ Heal~ Over~ How is ~ Poor              45        5.5
+##  6  2010 AL    AL - ~ Heal~ Over~ How is ~ Excelle~          91       15.6
+##  7  2010 AL    AL - ~ Heal~ Over~ How is ~ Very go~         177       31.3
+##  8  2010 AL    AL - ~ Heal~ Over~ How is ~ Good             224       31.2
+##  9  2010 AL    AL - ~ Heal~ Over~ How is ~ Fair             120       15.5
+## 10  2010 AL    AL - ~ Heal~ Over~ How is ~ Poor              66        6.4
+## # ... with 10,615 more rows, and 14 more variables:
+## #   confidence_limit_low &lt;dbl&gt;, confidence_limit_high &lt;dbl&gt;,
+## #   display_order &lt;int&gt;, data_value_unit &lt;chr&gt;, data_value_type &lt;chr&gt;,
+## #   data_value_footnote_symbol &lt;chr&gt;, data_value_footnote &lt;chr&gt;,
+## #   data_source &lt;chr&gt;, class_id &lt;chr&gt;, topic_id &lt;chr&gt;, location_id &lt;chr&gt;,
+## #   question_id &lt;chr&gt;, respid &lt;chr&gt;, geo_location &lt;chr&gt;</code></pre>
 <p>In 2002 and 2010, finding the states that were observed at 7 or more locations.</p>
 <pre class="r"><code>brfss_smart2010 %&gt;% 
   group_by(state) %&gt;% 
@@ -17203,15 +17223,15 @@ plot_of_distribution</code></pre>
 </tr>
 <tr class="odd">
 <td align="right">Comment</td>
-<td align="right">s(are any</td>
-<td align="left">trends appa</td>
-<td align="left">rant?)</td>
+<td align="right">s</td>
+<td align="left"></td>
+<td align="left"></td>
 <td align="right"></td>
 </tr>
 </tbody>
 </table>
 <p>There is a general decreasing trend from Monday to Wednesday, but a sudden increase on Thursday, and then a general decreasing trend form Thursday to Sunday.</p>
-<p>Accelerometer data allows the inspection activity over the course of the day. Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. Describe in words any patterns or conclusions you can make based on this graph.</p>
+<p>Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week.</p>
 <pre class="r"><code>accel_data %&gt;% 
   pivot_longer(
     activity_1:activity_64,

@@ -2,7 +2,7 @@
 title: "p8105_hw3_jf3286.Rmd"
 author: "Jingyu Fu"
 date: "2019/10/13"
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
@@ -48,7 +48,7 @@ data("instacart")
 
 Description: 
 
-This data has `r ncolinstacart()` columns and`r nrow(instacart)`rows. It contains numeric columns and character columns. Overall, this data contains inforation about order ID, product ID, customer ID, aisle name, the number of products, the number of order, etc. The key variables are those including ID information, beucase these variables are unique to each order or user. From this data we can tell what has a certain customer purchased. For example, we can tell thet user ID 112108 purchased Bulgarian Yogurt, Organic 4% Milk Fat Whole Milk Cottage Cheese, Organic Celery Hearts, and other 5 types of product. We can also tell how many times a certain customer has ordered a product. For example, user ID 112108 ordered Bulgarian Yogurt twice, becuase it is shown in caolumn of reordered that it has been reordered once. 
+This data has `r ncol(instacart)` columns and`r nrow(instacart)`rows. It contains numeric columns and character columns. Overall, this data contains inforation about order ID, product ID, customer ID, aisle name, the number of products, the number of order, etc. The key variables are those including ID information, beucase these variables are unique to each order or user. From this data we can tell what has a certain customer purchased. For example, we can tell thet user ID 112108 purchased Bulgarian Yogurt, Organic 4% Milk Fat Whole Milk Cottage Cheese, Organic Celery Hearts, and other 5 types of product. We can also tell how many times a certain customer has ordered a product. For example, user ID 112108 ordered Bulgarian Yogurt twice, becuase it is shown in caolumn of reordered that it has been reordered once. 
 
 
 Number of aisle
@@ -183,7 +183,7 @@ janitor::clean_names() %>%
     response = factor(response),
     response = fct_relevel (response, "Poor", "Fair", "Good", "Very good", "Excellent")
   )
-
+brfss_smart2010
 ```
 
 In 2002 and 2010, finding the states that were observed at 7 or more locations.
@@ -296,8 +296,6 @@ This data includes variables such as week, day_id, day, day_of_week and activity
 
 
 
-
-
 Aggregate accross minutes to create a total activity variable for each day, and create a table showing these totals. 
 ```{r}
 accel_data_tra = accel_data %>% 
@@ -317,12 +315,12 @@ accel_data_tra = accel_data %>%
   knitr::kable()
   
 ```
-Comments(are any trends apparant?)
+Comments
 
 There is a general decreasing trend from Monday to Wednesday, but a sudden increase on Thursday, and then a general decreasing trend form Thursday to Sunday. 
 
 
-Accelerometer data allows the inspection activity over the course of the day. Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. Describe in words any patterns or conclusions you can make based on this graph.
+ Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. 
 
 ```{r}
 accel_data %>% 
