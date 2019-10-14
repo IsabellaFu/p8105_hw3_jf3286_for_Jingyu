@@ -46,40 +46,41 @@ library(p8105.datasets)
 data("instacart")
 ```
 
-Description
+Description: 
 
-
-
-
+This data has `r ncolinstacart()` columns and`r nrow(instacart)`rows. It contains numeric columns and character columns. Overall, this data contains inforation about order ID, product ID, customer ID, aisle name, the number of products, the number of order, etc. The key variables are those including ID information, beucase these variables are unique to each order or user. From this data we can tell what has a certain customer purchased. For example, we can tell thet user ID 112108 purchased Bulgarian Yogurt, Organic 4% Milk Fat Whole Milk Cottage Cheese, Organic Celery Hearts, and other 5 types of product. We can also tell how many times a certain customer has ordered a product. For example, user ID 112108 ordered Bulgarian Yogurt twice, becuase it is shown in caolumn of reordered that it has been reordered once. 
 
 
 Number of aisle
 ```{r}
-instacart_order_total = 
+
   instacart%>% 
   group_by (aisle) %>%
-  mutate(order_total = add_to_cart_order + reordered) 
-
-instacart_n_aisle = instacart_order_total%>% 
   summarize (
-    n1 = n()
-    )  
-  
+    n_aisle = n()
+    )
 ```
 
 Aisle that are most items ordered from
 ```{r}
-instacart%>% 
+ instacart_n_items = instacart %>% 
   group_by(aisle) %>%
-  mutate(order_total = add_to_cart_order + reordered) %>% 
   summarize (
-    n2 = n_distinct(order_total)
+    n_items = sum(add_to_cart_order)
+  ) 
+
+  instacart_n_items %>%  mutate(
+    rank_items = rank(n_items)
   ) %>% 
-  max(order_total)
+  filter (
+    rank_items == 1
+  )
+  
 ```
 
 Comments
 
+Most items are ordered from aisle specialty wines champagnes, it can be assumed that among those investigated aisles in this data, specialty wines champagnes is the most popular aisle. 
 
 
 
@@ -88,47 +89,56 @@ Comments
 
 Making plots,limiting to aisles with more than 10000 items, arranging aisles, and organizing plots
 ```{r}
-instacart_order_total %>% 
+instacart_n_items %>% 
   filter(
-    order_total <= 10000
+    n_items >= 10000
     ) %>% 
-  ggplot(aes (x = aisle, y = order_total)) + 
+   mutate(
+    aisle = factor(aisle),
+    aisle = fct_reorder(aisle, n_items)
+  ) %>% 
+  ggplot(aes (x = aisle, y = n_items, color ="blue")) + 
   geom_point(alpha = .5) + 
   labs(
-    title = "aisle and number of items ordered",
-    x = "aisle",
-    y = "nuber of items ordered",
+    title = "Aisle and number of items ordered",
+    x = "Aisle",
+    y = "Nuber of items ordered",
     caption = "Data from instcart"
   ) +
   theme_bw()+
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom")+
+  viridis::scale_color_viridis(
+    name = "Aisle", 
+    discrete = TRUE
+  )
+
 ```
 
 Comments
 
-
+The plots look like a function graph. The number of items ordered from each ailse increased steadily at first but then there's a sudden  severe increase. For most of the aisles, each has  10110 ~ (5e^5)/2 items ordered, but for several others, there are a lot more.  
 
 
 
 
 Making tables showing the three most popular items in each of the aisles
 ```{r}
-instacart_order_total %>% 
-  group_by(aisle,product_name) %>% 
+instacart %>% 
+  group_by(aisle) %>% 
   mutate(
     add_to_cart_order = desc(add_to_cart_order),
-    pop_rank = min_rank (add_to_cart_order)
+    rank_product = min_rank(add_to_cart_order)
   ) %>% 
   filter(
-    pop_rank == 1,2,3
+    rank_product == 1,2,3
   ) %>% 
-  select(aisle, product_name, pop_rank) %>% 
+  select(aisle, rank_product, product_name, add_to_cart_order) %>% 
    knitr::kable()
   
 ```
 Comments
 
-
+Each aisle has its own most popular items. For example, the most popular item in aisle dog food care is sausage cuts real beef treats. The order number of the most popular items in each aisle is around 60 to 80. 
 
 
 
@@ -136,11 +146,26 @@ Comments
 
 Making table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week
 ```{r}
-
+instacart_2products = instacart %>%
+  group_by(product_name,order_dow) %>% 
+  filter(
+    product_name %in%  c("Pink Lady Apples","Coffee Ice Cream")  
+    )  %>% 
+  summarize(
+    mean_hour = mean(order_hour_of_day)
+     
+  ) %>% 
+  pivot_wider (
+    names_from = order_dow,
+    values_from = mean_hour
+  )
+ 
+instacart_2products    
+  
 ```
 
 Comments
-
+Coffee Ice Cream has its highest mean order hour of the day on order_dow 2(which is Monday), while Pink Lady Apples has its highest mean order hour of the day on order_dow 3 (which is Tuesday). 
 
 
 
