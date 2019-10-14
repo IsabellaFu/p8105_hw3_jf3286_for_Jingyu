@@ -84,9 +84,6 @@ Most items are ordered from aisle specialty wines champagnes, it can be assumed 
 
 
 
-
-
-
 Making plots,limiting to aisles with more than 10000 items, arranging aisles, and organizing plots
 ```{r}
 instacart_n_items %>% 
@@ -119,8 +116,6 @@ Comments
 The plots look like a function graph. The number of items ordered from each ailse increased steadily at first but then there's a sudden  severe increase. For most of the aisles, each has  10110 ~ (5e^5)/2 items ordered, but for several others, there are a lot more.  
 
 
-
-
 Making tables showing the three most popular items in each of the aisles
 ```{r}
 instacart %>% 
@@ -142,9 +137,7 @@ Each aisle has its own most popular items. For example, the most popular item in
 
 
 
-
-
-Making table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week
+Making table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week.
 ```{r}
 instacart_2products = instacart %>%
   group_by(product_name,order_dow) %>% 
@@ -168,20 +161,10 @@ Comments
 Coffee Ice Cream has its highest mean order hour of the day on order_dow 2(which is Monday), while Pink Lady Apples has its highest mean order hour of the day on order_dow 3 (which is Tuesday). 
 
 
-
-
-
-
-
 ## Problem 2
-
 
 Load data from a package, and  do some data cleaning:
 
-format the data to use appropriate variable names;
-focus on the “Overall Health” topic
-include only responses from “Excellent” to “Poor”
-organize responses as a factor taking levels ordered from “Poor” to “Excellent”
 ```{r}
 library(p8105.datasets)
 data("brfss_smart2010")
@@ -190,7 +173,7 @@ brfss_smart2010 = brfss_smart2010 %>%
 janitor::clean_names() %>% 
   rename (
     state = locationabbr ,
-    location_desc = locationdesc  
+    county = locationdesc  
   ) %>% 
   filter(
     topic == "Overall Health", 
@@ -203,16 +186,13 @@ janitor::clean_names() %>%
 
 ```
 
-
-
-
-In 2002, which states were observed at 7 or more locations? What about in 2010?
+In 2002 and 2010, finding the states that were observed at 7 or more locations.
 ```{r}
 brfss_smart2010 %>% 
   group_by(state) %>% 
   filter(year == 2002) %>% 
   summarize (
-    n_location = n_distinct(location_desc)
+    n_location = n_distinct(county)
   ) %>% 
     filter(n_location >= 7)
   
@@ -220,18 +200,15 @@ brfss_smart2010 %>%
   group_by(state) %>% 
   filter(year == 2010) %>% 
   summarize (
-    n_location = n_distinct(location_desc)
+    n_location = n_distinct(county)
   ) %>% 
     filter(n_location >= 7)
 ```
 Comments
+In 2002, there are 6 states that were observed at 7 or more locations, while in 2010, there were 14. States including FL, MA, NC, NJ, PA were both observed in 2002 and 2010. 
 
 
-
-
-
-
-Construct a dataset that is limited to Excellent responses, and contains, year, state, and a variable that averages the data_value across locations within a state. Make a “spaghetti” plot of this average value over time within a state (that is, make a plot showing a line for each state across years – the geom_line geometry and group aesthetic will help).
+Construct a dataset that is limited to Excellent responses, and contains, year, state, and a Make a “spaghetti” plot of this average value over time within a state. 
 
 ```{r}
 dataset_prob2 = brfss_smart2010 %>% 
@@ -245,46 +222,57 @@ dataset_prob2 = brfss_smart2010 %>%
   geom_line( aes (x = year, y = ave_data_value, color = state),alpha = .5)+
    labs (
      title = "State and Year",
-     x = "year",
-     y = "average value",
+     x = "Year",
+     y = "Average value",
      caption = "Data from BRFSS"
    )+
    theme_bw()+
-   theme(legend.position = "bottom")
+   theme(legend.position = "bottom") +
+   viridis::scale_color_viridis(
+    name = "state", 
+    discrete = TRUE
+  )
+ 
+ 
 ```
 Comments
 
-
-
-
+For most those with a "Excellent" response, the average data value changes severely over time. For very few of them, the average value stays somewhere between 20 and 25, and most of them are between 15 and 30. 
 
 
 Make a two-panel plot showing, for the years 2006, and 2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State.
 ```{r}
-brfss_smart2010 %>% 
-  group_by(response) %>% 
-  filter(state == "NY" & year == 2006,2010) %>% 
-  ggplot(aes(x = location_desc, y = data_value, color = response))+
-  geom_point()+
+
+plot_of_distribution = brfss_smart2010 %>% 
+  group_by(response,year) %>% 
+  filter(state == "NY" & year %in% c("2006","2010")  & response %in% c("Poor","Excellent")) %>% 
+  ggplot(aes(x = county, y = data_value, color = response))+
+  geom_col(aes(fill = response))+
   labs (
-     title = "Distribution of data value among locations",
-     x = "locations",
-     y = "data value",
+     title = "Distribution of data value among locations in 2006",
+     x = "Locations",
+     y = "Data value",
      caption = "Data from BRFSS"
    )+
    theme_bw()+
    theme(legend.position = "bottom")+
-  facet_grid (~ year)
+  facet_grid (~ year)+
+  viridis::scale_color_viridis(
+    name = "response", 
+    discrete = TRUE)
+
+plot_of_distribution
 ```
 Comments
 
+Those with a "Poor" response have a much higher data value compared to those with "Excellent" response. 
 
 
 
 
 
 ## Problem 3
-Load, tidy, and otherwise wrangle the data. Your final dataset should include all originally observed variables and values; have useful variable names; include a weekday vs weekend variable; and encode data with reasonable variable classes. Describe the resulting dataset (e.g. what variables exist, how many observations, etc).
+Load, tidy, and otherwise wrangle the data.
 
 ```{r}
 accel_data = read_csv(file = "./accel_data.csv") %>% 
@@ -304,13 +292,13 @@ accel_data = read_csv(file = "./accel_data.csv") %>%
   select(week, day_id, day, day_of_week,everything())
 ```
 Desicription
+This data includes variables such as week, day_id, day, day_of_week and activity. There are 'r count(accel_data, week)'obervations for week. 
 
 
 
 
 
-
-Traditional analyses of accelerometer data focus on the total activity over the day. Using your tidied dataset, aggregate accross minutes to create a total activity variable for each day, and create a table showing these totals. Are any trends apparent?
+Aggregate accross minutes to create a total activity variable for each day, and create a table showing these totals. 
 ```{r}
 accel_data_tra = accel_data %>% 
   group_by (day_id) %>% 
@@ -331,10 +319,7 @@ accel_data_tra = accel_data %>%
 ```
 Comments(are any trends apparant?)
 
-
-
-
-
+There is a general decreasing trend from Monday to Wednesday, but a sudden increase on Thursday, and then a general decreasing trend form Thursday to Sunday. 
 
 
 Accelerometer data allows the inspection activity over the course of the day. Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. Describe in words any patterns or conclusions you can make based on this graph.
