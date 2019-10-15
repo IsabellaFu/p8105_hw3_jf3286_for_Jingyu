@@ -1,5 +1,5 @@
 ---
-title: "p8105_hw3_jf3286.Rmd"
+title: "Untitled"
 author: "Jingyu Fu"
 date: "2019/10/13"
 output: github_document
@@ -183,7 +183,7 @@ janitor::clean_names() %>%
     response = factor(response),
     response = fct_relevel (response, "Poor", "Fair", "Good", "Very good", "Excellent")
   )
-brfss_smart2010
+
 ```
 
 In 2002 and 2010, finding the states that were observed at 7 or more locations.
@@ -296,6 +296,8 @@ This data includes variables such as week, day_id, day, day_of_week and activity
 
 
 
+
+
 Aggregate accross minutes to create a total activity variable for each day, and create a table showing these totals. 
 ```{r}
 accel_data_tra = accel_data %>% 
@@ -309,18 +311,21 @@ accel_data_tra = accel_data %>%
   mutate(
     activity_total = sum(activity_counts) 
   ) %>% 
-  select (week, day_id, day, day_of_week, activity_total)  
+pivot_wider (
+  names_from = day,
+  values_from = activity_counts
+)
   
  accel_data_tra %>% 
   knitr::kable()
   
 ```
-Comments
+Comments(are any trends apparant?)
 
 There is a general decreasing trend from Monday to Wednesday, but a sudden increase on Thursday, and then a general decreasing trend form Thursday to Sunday. 
 
 
- Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. 
+Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week.
 
 ```{r}
 accel_data %>% 
